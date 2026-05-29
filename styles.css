@@ -13,7 +13,8 @@ button.primary{background:var(--primary); border:none; color:white; font-weight:
 .result-chip{display:flex; align-items:center; gap:12px; margin-left:auto}
 .result-card{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:8px 12px; min-width:260px}
 .result-card .row1{display:flex; justify-content:space-between; gap:8px}
-.result-card .row2{display:flex; justify-content:space-between; gap:8px; margin-top:4px; color:var(--muted)}
+.result-card .row1 span{color:#ffffff;font-weight:700;}
+.result-card .row2{display:flex; justify-content:space-between; gap:8px; margin-top:4px; color:#ffffff; font-weight:700}
 .download-link{margin-left:12px; color:#ffffff; font-size:12px; text-decoration:none}
 .layout{display:grid; grid-template-columns:1fr 1fr; gap:16px; padding:16px}
 .section-head{display:flex; justify-content:space-between; align-items:center}
