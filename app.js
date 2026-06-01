@@ -420,16 +420,26 @@ function getTreemapLeafBase(raw, svgId){
 
   if (!Number.isFinite(raw)) return minBase;
 
-  const absVal = Math.abs(raw);
+  // 正成長：數值越大，格子越大
+  if (raw > 0) {
+    const cap = (svgId === 'downTreemap') ? 180 : 220;
+    const exponent = (svgId === 'downTreemap') ? 0.42 : 0.50;
+    const capped = Math.min(raw, cap);
 
-  // 右邊概念股：避免單一超高成長率個股吃掉太多面積
-  if (svgId === 'downTreemap') {
-    const capped = Math.min(absVal, 180);
-    return Math.max(minBase, Math.pow(capped + 1, 0.42));
+    return minBase + Math.pow(capped + 1, exponent);
   }
 
-  // 左邊相同產業股維持原本接近 sqrt 的邏輯
-  return Math.max(minBase, Math.sqrt(absVal + 1));
+  // 0 附近：給基本大小
+  if (raw === 0) {
+    return minBase;
+  }
+
+  // 負成長：越負，格子越小
+  // 例如 -5% 仍有一定大小，-50%、-100% 會明顯縮小
+  const negAbs = Math.abs(raw);
+  const shrink = 1 / Math.pow(1 + negAbs / 20, 0.75);
+
+  return Math.max(0.18, minBase * shrink);
 }
 
 
