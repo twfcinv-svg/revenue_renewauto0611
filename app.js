@@ -525,7 +525,7 @@ function renderConceptNote(selfRow, downstreamEdges){
       <span class="concept-note-title">概念股補充</span>
       <span class="concept-note-text">
         因概念股清單較多，熱力圖僅呈現部分代表分類與個股。
-        此個股為 ${concepts.map(c => safe(c)).join('、')} 概念股。
+        此個股為 <strong class="concept-list">${concepts.map(c => safe(c)).join('、')}<strong/> 概念股。
       </span>
     </div>
   `;
