@@ -341,8 +341,13 @@ function getMetricValue(row, month, metric){
   return Number.isFinite(v) ? v : null;
 }
 
-function isZeroMetricValue(v){
-  return Number.isFinite(v) && Math.abs(v) < 1e-9;
+function shouldSkipTreemapValue(v){
+  // 無效值、空值、找不到資料，直接不放進熱力圖
+  if (!Number.isFinite(v)) return true;
+
+  // 因為畫面只顯示到小數第 1 位
+  // 所以 -0.04、0.03 這種最後會顯示成 0.0% 的值，也直接省略
+  return Math.abs(v) < 0.05;
 }
 
 
@@ -985,33 +990,27 @@ function renderTreemap(svgId, hintId, edges, codeField, month, metric, colorMode
 
   const groups = new Map();
 
+
 for (const e of (edges || [])) {
   const keyRaw = normCode(e[codeField] || e['down'] || e['up']);
   if (isUSCode(keyRaw)) continue;
 
   const r = byCode.get(keyRaw);
-  const groupName = getTreemapGroupName(svgId, e, r);
 
+  // 找不到 Revenue 資料者，不放進熱力圖
+  // 避免產生 raw:null 的空白小方塊
   if (!r) {
-    if (!groups.has(groupName)) groups.set(groupName, []);
-
-    groups.get(groupName).push({
-      code: keyRaw,
-      name: '',
-      raw: null,
-      rel: groupName
-    });
-
     continue;
   }
 
   const v = getMetricValue(r, month, metric);
 
-  // 新增條件：
-  // 如果該個股當月 YoY / MoM 數值為 0，直接省略，不放進熱力圖
-  if (isZeroMetricValue(v)) {
+  // 0、接近 0、無效值，全部省略
+  if (shouldSkipTreemapValue(v)) {
     continue;
   }
+
+  const groupName = getTreemapGroupName(svgId, e, r);
 
   if (!groups.has(groupName)) groups.set(groupName, []);
 
@@ -1051,10 +1050,12 @@ for (const e of (edges || [])) {
 
     const avg = validVals.length ? d3.mean(validVals) : 0;
 
-const baseValues = list.map(s => {
-  const base = getTreemapLeafBase(s.raw, svgId);
-  return { s, base };
-});
+const baseValues = list
+  .filter(s => !shouldSkipTreemapValue(s.raw))
+  .map(s => {
+    const base = getTreemapLeafBase(s.raw, svgId);
+    return { s, base };
+  });
 
 const baseSum = d3.sum(baseValues, d => d.base) || EPS;
 
