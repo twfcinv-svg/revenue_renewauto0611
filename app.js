@@ -502,8 +502,57 @@ function handleRun(){
     if (window.setResultChipLink) window.setResultChipLink(codeLabel, nameLabel, extra);
   } catch (_) {}
 
-  const upstreamEdges = upstreamHJ.filter(e => e['下游代號'] === codeKey);
-  let downstreamEdges = downstreamHJ.filter(e => e['上游代號'] === codeKey);
+let upstreamEdges = upstreamHJ.filter(e => e['下游代號'] === codeKey);
+let downstreamEdges = downstreamHJ.filter(e => e['上游代號'] === codeKey);
+
+// 左邊相同產業股加入查詢個股本身
+const upstreamGroupNames = [...new Set(
+  upstreamEdges
+    .map(e => normText(e['關係類型'] || e['type'] || ''))
+    .filter(Boolean)
+)];
+
+const selfAlreadyInUpstream = upstreamEdges.some(e =>
+  normCode(e['上游代號']) === codeKey
+);
+
+if (!selfAlreadyInUpstream) {
+  const fallbackGroup = normText(rowSelf['產業別'] || '相同產業分類');
+  const groupsToAdd = upstreamGroupNames.length ? upstreamGroupNames : [fallbackGroup];
+
+  for (const groupName of groupsToAdd) {
+    upstreamEdges.push({
+      '上游代號': codeKey,
+      '下游代號': codeKey,
+      '關係類型': groupName,
+      '__self': true
+    });
+  }
+}
+
+// 右邊概念股加入查詢個股本身
+const downstreamGroupNames = [...new Set(
+  downstreamEdges
+    .map(e => normText(e['關係類型'] || e['type'] || ''))
+    .filter(Boolean)
+)];
+
+const selfAlreadyInDownstreamGroups = new Set(
+  downstreamEdges
+    .filter(e => normCode(e['下游代號']) === codeKey)
+    .map(e => normText(e['關係類型'] || e['type'] || ''))
+);
+
+for (const groupName of downstreamGroupNames) {
+  if (selfAlreadyInDownstreamGroups.has(groupName)) continue;
+
+  downstreamEdges.push({
+    '上游代號': codeKey,
+    '下游代號': codeKey,
+    '關係類型': groupName,
+    '__self': true
+  });
+}
 
 
   downstreamEdges = downstreamEdges.filter(e => !String(e['下游代號']).endsWith('.US'));
