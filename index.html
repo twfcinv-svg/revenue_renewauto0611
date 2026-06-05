@@ -289,77 +289,92 @@
 
   </section>
 
-  <main class="layout">
-    <section class="column" id="upstreamCol">
-      <div class="section-head">
-        <h2>相同產業股</h2>
-        <div class="legend">
-          <span class="chip pos-chip">表現佳</span>
-          <span class="chip neg-chip">表現弱</span>
-        </div>
+ 
+<main class="layout">
+  <section class="column" id="upstreamCol">
+    <div class="section-head">
+      <h2>相同產業股</h2>
+      <div class="legend">
+        <span class="chip pos-chip">表現佳</span>
+        <span class="chip neg-chip">表現弱</span>
       </div>
-      <div class="treemap-wrap"><svg id="upTreemap"></svg></div>
-       <div id="upHint" class="meta" style="margin-top:6px"></div>
-    </section>
+    </div>
 
-    <section class="column" id="downstreamCol">
-      <div class="section-head">
-        <h2>概念股</h2>
-        <div class="legend">
-          <span class="chip pos-chip">表現佳</span>
-          <span class="chip neg-chip">表現弱</span>
-        </div>
+    <div class="treemap-wrap">
+      <svg id="upTreemap"></svg>
+    </div>
+
+    <div id="upHint" class="meta" style="margin-top:6px"></div>
+  </section>
+
+  <section class="column" id="downstreamCol">
+    <div class="section-head">
+      <h2>概念股</h2>
+      <div class="legend">
+        <span class="chip pos-chip">表現佳</span>
+        <span class="chip neg-chip">表現弱</span>
       </div>
+    </div>
 
-      <div class="treemap-wrap">
-        <svg id="downTreemap"></svg>
-      </div>
+    <div class="treemap-wrap">
+      <svg id="downTreemap"></svg>
+    </div>
 
-      <div id="downHint" class="meta" style="margin-top:6px"></div>
+    <div id="downHint" class="meta" style="margin-top:6px"></div>
 
-      <div id="conceptNote" class="concept-note"></div>
-    </section>
+    <div id="conceptNote" class="concept-note"></div>
+  </section>
 
-    <section id="icp-section">
-      <div class="section-head"><h2>個股產業鏈</h2><div class="icp-note"></div></div>
-      <div id="icp-fold-wrap">
-        <div id="icp-scroll">
-          <div id="icp-grid">
-            <aside class="icp-box">
-              <div class="icp-title">上游廠商</div>
-              <div id="icp-up-wrap"></div>
-            </aside>
-            <aside class="icp-box">
-              <div class="icp-title">下游客戶</div>
-              <div id="icp-down-wrap"></div>
-            </aside>
+  <section class="bottom-layout-new">
+    <div class="bottom-left-main">
+      <section class="chart-section" id="combo-section">
+        <div class="section-head">
+          <h2>營收走勢</h2>
+          <div class="legend-row">
+            <span class="chip"><i class="swatch" style="background:#e74c3c"></i> 合併營收</span>
+            <span class="chip"><i class="swatch" style="background:#f4d03f"></i> 月增率 (MoM)</span>
+            <span class="chip"><i class="swatch" style="background:#00d8d6"></i> 年增率 (YoY)</span>
           </div>
         </div>
-        <div id="icp-fade"></div>
-        <div id="icp-expander" aria-expanded="false" role="button" title="展開/收合">＋</div>
-      </div>
-    </section>
 
-    <section class="chart-section" id="combo-section">
-      <div class="section-head">
-        <h2>營收走勢</h2>
-        <div class="legend-row">
-          <span class="chip"><i class="swatch" style="background:#e74c3c"></i> 合併營收</span>
-          <span class="chip"><i class="swatch" style="background:#f4d03f"></i> 月增率 (MoM)</span>
-          <span class="chip"><i class="swatch" style="background:#00d8d6"></i> 年增率 (YoY)</span>
+        <div class="chart-wrap">
+          <svg id="comboChart"></svg>
         </div>
-      </div>
-      <div class="chart-wrap"><svg id="comboChart"></svg></div>
-      <div id="comboHint" class="meta" style="display:none"></div>
+
+        <div id="comboHint" class="meta" style="display:none"></div>
+
         <div id="newHighSection" class="new-high-panel">
-       <div class="new-high-head">
-         <h3 id="newHighTitle">最新月營收創新高個股彙整</h3>
-         <div id="newHighMeta" class="meta"></div>
-       </div>
-       <div id="newHighTableWrap" class="new-high-table-wrap"></div>
-      </div>
-    </section>
-  </main>
+          <div class="new-high-head">
+            <h3 id="newHighTitle">最新月營收創新高個股彙整</h3>
+            <div id="newHighMeta" class="meta"></div>
+          </div>
+
+          <div id="newHighTableWrap" class="new-high-table-wrap"></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="bottom-right-main">
+      <section class="concept-stock-panel">
+        <div class="concept-stock-head">
+          <div>
+            <h2 id="conceptStockListTitle">概念股完整名單</h2>
+            <div id="conceptStockListMeta" class="meta">
+              請點選上方「概念股補充」中的概念股名稱
+            </div>
+          </div>
+        </div>
+
+        <div id="conceptStockListWrap">
+          <div class="concept-stock-empty">
+            點選上方概念股名稱後，這裡會顯示該概念股的完整個股名單。
+          </div>
+        </div>
+      </section>
+    </div>
+  </section>
+</main>
+
 
 
   <script src='app.js?v='+VER></script>
@@ -367,7 +382,7 @@
   <script src='app_query_link_B.js?v='+VER></script>
   <script src='combo-chart.js?v='+VER></script>
   <script src='treemap-tooltip.js?v='+VER></script>
-  <script src='industry-chain-panel.js?v='+VER></script>
+
 
 
 </body>
