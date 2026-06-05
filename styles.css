@@ -68,3 +68,179 @@ button.primary{background:var(--primary); border:none; color:white; font-weight:
   letter-spacing:0.2px;
 }
 
+/* ===== 下半部新版配置：左側營收走勢，右側概念股完整名單 ===== */
+.bottom-layout-new {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.95fr);
+  gap: 16px;
+  align-items: start;
+  margin-top: 8px;
+}
+
+.bottom-left-main,
+.bottom-right-main {
+  min-width: 0;
+}
+
+.bottom-left-main .chart-section {
+  margin: 0;
+}
+
+.bottom-right-main {
+  height: 100%;
+}
+
+/* ===== 概念股完整名單 Panel ===== */
+.concept-stock-panel {
+  width: 100%;
+  min-height: 520px;
+  background: rgba(15, 23, 42, 0.40);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 12px;
+  color: #e5e7eb;
+}
+
+.concept-stock-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.concept-stock-head h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: .3px;
+  color: #ffffff;
+}
+
+#conceptStockListMeta {
+  margin-top: 4px;
+}
+
+/* ===== 尚未點選概念股時的提示 ===== */
+.concept-stock-empty {
+  padding: 14px 12px;
+  color: #cbd5e1;
+  font-size: 13px;
+  line-height: 1.7;
+  border: 1px dashed rgba(255,255,255,0.14);
+  border-radius: 8px;
+  background: rgba(2,6,23,.35);
+}
+
+/* ===== 概念股補充裡面的可點選概念股名稱 ===== */
+.concept-chip-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: #ffffff;
+  font: inherit;
+  font-weight: 900;
+  letter-spacing: 0.2px;
+  padding: 0 2px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.concept-chip-btn:hover {
+  color: #93c5fd;
+  text-decoration: underline;
+}
+
+.concept-chip-btn.active {
+  color: #38bdf8;
+  text-decoration: underline;
+}
+
+/* ===== 概念股完整名單表格 ===== */
+.concept-stock-table-wrap {
+  overflow: auto;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 8px;
+  background: rgba(2,6,23,.35);
+}
+
+.concept-stock-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 620px;
+  font-size: 13px;
+  color: #e5e7eb;
+}
+
+.concept-stock-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #0f172a;
+  color: #cbd5e1;
+  text-align: left;
+  font-weight: 800;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255,255,255,.12);
+  white-space: nowrap;
+}
+
+.concept-stock-table tbody td {
+  padding: 8px 12px;
+  border-bottom: 1px dashed rgba(255,255,255,.08);
+  vertical-align: middle;
+}
+
+.concept-stock-table tbody tr:hover td {
+  background: rgba(255,255,255,.03);
+}
+
+.concept-stock-table td.code {
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.concept-stock-table td.name {
+  white-space: nowrap;
+}
+
+.concept-stock-table td.industry {
+  color: #cbd5e1;
+  white-space: nowrap;
+}
+
+.concept-stock-table td.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.concept-stock-table th.th-num {
+  text-align: right;
+}
+
+.concept-stock-link {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 800;
+}
+
+.concept-stock-link:hover {
+  color: #93c5fd;
+  text-decoration: underline;
+}
+
+/* ===== RWD：窄畫面時上下排列 ===== */
+@media (max-width: 1100px) {
+  .bottom-layout-new {
+    grid-template-columns: 1fr;
+  }
+
+  .concept-stock-panel {
+    min-height: auto;
+  }
+}
+
+
