@@ -623,7 +623,53 @@ function renderResultChip(selfRow, month, metric, colorMode){
     </div>`;
 }
 
+function ensureConceptNoteStyles(){
+  const oldStyle = document.getElementById('conceptNoteInlineStyle');
+  if (oldStyle) oldStyle.remove();
+
+  const style = document.createElement('style');
+  style.id = 'conceptNoteInlineStyle';
+  style.textContent = `
+    #conceptNote .concept-note-inner {
+      line-height: 1.45 !important;
+      padding-top: 14px !important;
+      padding-bottom: 14px !important;
+    }
+
+    #conceptNote .concept-note-title {
+      line-height: 1.45 !important;
+      vertical-align: baseline !important;
+    }
+
+    #conceptNote .concept-note-text {
+      line-height: 1.45 !important;
+      vertical-align: baseline !important;
+    }
+
+    #conceptNote .concept-list {
+      line-height: 1.45 !important;
+    }
+
+    #conceptNote .concept-chip-btn {
+      display: inline !important;
+      line-height: 1.45 !important;
+      padding: 0 !important;
+      margin: 0 3px !important;
+      border: none !important;
+      background: transparent !important;
+      vertical-align: baseline !important;
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
+
+
+
+
 function renderConceptNote(selfRow, downstreamEdges){
+  ensureConceptNoteStyles();
   const host = document.querySelector('#conceptNote');
 
   if (!host) {
