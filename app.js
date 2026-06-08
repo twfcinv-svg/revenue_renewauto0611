@@ -790,8 +790,16 @@ function ensureConceptStockTableStyles(){
   const style = document.createElement('style');
   style.id = 'conceptStockTableInlineStyle';
   style.textContent = `
+    #conceptStockListWrap .concept-stock-table-wrap {
+      width: 100% !important;
+      max-width: 100% !important;
+      overflow-x: hidden !important;
+    }
+
     #conceptStockListWrap .concept-stock-table {
       width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
       border-collapse: collapse !important;
       table-layout: fixed !important;
     }
@@ -805,7 +813,7 @@ function ensureConceptStockTableStyles(){
     }
 
     #conceptStockListWrap .concept-stock-table col.col-industry {
-      width: 23% !important;
+      width: 25% !important;
     }
 
     #conceptStockListWrap .concept-stock-table col.col-mom {
@@ -818,7 +826,7 @@ function ensureConceptStockTableStyles(){
 
     #conceptStockListWrap .concept-stock-table thead th,
     #conceptStockListWrap .concept-stock-table tbody td {
-      padding: 10px 14px !important;
+      padding: 10px 10px !important;
       vertical-align: middle !important;
       box-sizing: border-box !important;
       color: #f8fafc !important;
