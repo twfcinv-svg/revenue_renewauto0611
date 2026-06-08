@@ -797,7 +797,7 @@ function ensureConceptStockTableStyles(){
     }
 
     #conceptStockListWrap .concept-stock-table col.col-code {
-      width: 14% !important;
+      width: 13% !important;
     }
 
     #conceptStockListWrap .concept-stock-table col.col-name {
@@ -805,7 +805,7 @@ function ensureConceptStockTableStyles(){
     }
 
     #conceptStockListWrap .concept-stock-table col.col-industry {
-      width: 24% !important;
+      width: 23% !important;
     }
 
     #conceptStockListWrap .concept-stock-table col.col-mom {
