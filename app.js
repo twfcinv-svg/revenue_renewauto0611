@@ -679,7 +679,7 @@ function renderConceptNote(selfRow, downstreamEdges){
     <div class="concept-note-inner">
       <span class="concept-note-title">概念股補充</span>
       <span class="concept-note-text">
-        因概念股清單較多，熱力圖僅呈現部分代表分類與個股。
+        概念股清單較多時，熱力圖僅呈現部分代表分類與個股。
         此個股為 <span class="concept-list">${conceptButtonsHtml}</span> 概念股。
       </span>
     </div>
