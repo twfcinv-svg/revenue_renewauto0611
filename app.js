@@ -1560,21 +1560,12 @@ for (const [rel, groupObj] of groups) {
 // YoY = 本月營收加總 / 去年同月營收加總 - 1
 //
 // 右邊下游概念股如果你也想套用同樣邏輯，可以拿掉 svgId === 'upTreemap' 的限制
-let avg = null;
 
-if (svgId === 'upTreemap') {
   const groupRows = avgList
     .map(d => d.row)
     .filter(Boolean);
 
-  avg = getGroupAggregateRevenuePerformance(groupRows, month, metric);
-} else {
-  const validVals = avgList
-    .map(d => d.raw)
-    .filter(v => Number.isFinite(v));
-
-  avg = validVals.length ? d3.mean(validVals) : null;
-}
+ let avg = getGroupAggregateRevenuePerformance(groupRows, month, metric);
 
 if (!Number.isFinite(avg)) {
   avg = 0;
