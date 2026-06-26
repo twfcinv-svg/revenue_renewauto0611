@@ -911,7 +911,7 @@ function renderResultChip(selfRow, month, metric, colorMode){
         rel="noopener noreferrer"
         title="${safe(showCode)} ${safe(showName)} 最新研究報告：${safe(report.date)}"
       >
-        <span class="research-report-label">y最新研究報告</span>
+        <span class="research-report-label">最新研究報告</span>
         <span class="research-report-date">${safe(report.date)}</span>
       </a>
     `
