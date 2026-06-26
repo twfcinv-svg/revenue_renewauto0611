@@ -17,6 +17,8 @@ const REVENUE_SHEET = 'Revenue';
 const LINKS_SHEET   = 'Links';
 const DOWNLINKS_SHEET = 'DownLinks';
 const NEWHIGH_SHEET   = '創新高';
+const RESEARCH_REPORT_SHEET = '研究部評等';
+
 
 const CODE_FIELDS = ['個股','代號','股票代碼','股票代號','公司代號','證券代號'];
 const NAME_FIELDS = ['名稱','公司名稱','證券名稱'];
@@ -53,6 +55,9 @@ const DOWN_FALLBACK_KEEP_PER_GROUP = 2;
 
 let revenueRows = [], linksRows = [], downRows = [], downRowsRaw = [], months = [];
 let newHighSheetRows = [];
+let researchReportRows = [];
+let researchReportByCode = new Map();
+
 let byCode = new Map();
 let byName = new Map();
 let linksByUp = new Map();
@@ -169,6 +174,7 @@ async function loadWorkbook(){
   const wsLinks = wb.Sheets[LINKS_SHEET];
   const wsDown = wb.Sheets[DOWNLINKS_SHEET];
   const wsNewHigh = wb.Sheets[NEWHIGH_SHEET];
+  const wsResearchReport = wb.Sheets[RESEARCH_REPORT_SHEET];
 
   if (!wsRev || !wsLinks) throw new Error('找不到必要工作表 Revenue 或 Links');
 
@@ -245,6 +251,12 @@ for (const rawHeader of headerRow) {
     ? XLSX.utils.sheet_to_json(wsNewHigh, { header: 1, defval: '', blankrows: false, raw: false })
     : [];
 
+  researchReportRows = wsResearchReport
+  ? XLSX.utils.sheet_to_json(wsResearchReport, { header: 1, defval: '', blankrows: false, raw: false })
+  : [];
+
+buildResearchReportMap();
+
   byCode.clear();
   byName.clear();
 
@@ -316,6 +328,70 @@ console.log("Links 筆數 =", linksRows.length);
 console.log("左邊相同產業分類 DownLinks(GHI) 筆數 =", upstreamHJ.length);
 console.log("右邊 DownLinks(ABC) 筆數 =", downstreamHJ.length);
 }
+
+
+
+function parseResearchReportDateToTime(dateText){
+  const s = normText(dateText);
+  if (!s) return -Infinity;
+
+  // 支援 2026/5/20、2026/05/20、2026-5-20、2026.5.20
+  const m = s.match(/^(\d{4})[\/\-\.](\d{1,2})[\/\-\.](\d{1,2})$/);
+  if (!m) return -Infinity;
+
+  const y = Number(m[1]);
+  const mo = Number(m[2]);
+  const d = Number(m[3]);
+
+  if (!Number.isFinite(y) || !Number.isFinite(mo) || !Number.isFinite(d)) {
+    return -Infinity;
+  }
+
+  return new Date(y, mo - 1, d).getTime();
+}
+
+function buildResearchReportMap(){
+  researchReportByCode.clear();
+
+  if (!Array.isArray(researchReportRows) || !researchReportRows.length) {
+    console.warn('[研究部評等] 無資料或找不到工作表');
+    return;
+  }
+
+  for (const row of researchReportRows) {
+    // 依照你截圖：
+    // A欄 = 代碼
+    // B欄 = 公司
+    // C欄 = 日期
+    const code = normCode(row[0]);
+    const name = normText(row[1]);
+    const date = normText(row[2]);
+
+    // 略過空白列、標題列、說明列
+    if (!code || !date) continue;
+    if (code === '代碼' || code === '股票代號' || code === 'Ticker') continue;
+    if (!/^\d{4}$/.test(code)) continue;
+
+    const time = parseResearchReportDateToTime(date);
+
+    const item = {
+      code,
+      name,
+      date,
+      time
+    };
+
+    const old = researchReportByCode.get(code);
+
+    // 同一檔股票如果有多筆報告，只保留日期最新的一筆
+    if (!old || item.time > old.time) {
+      researchReportByCode.set(code, item);
+    }
+  }
+
+  console.log('[研究部評等] 有報告個股數 =', researchReportByCode.size);
+}
+
 
 function initControls(){
   const sel = document.querySelector('#monthSelect');
@@ -691,6 +767,76 @@ requestAnimationFrame(() => {
 }
 
 
+function ensureResultChipReportStyles(){
+  if (document.getElementById('resultChipReportInlineStyle')) return;
+
+  const style = document.createElement('style');
+  style.id = 'resultChipReportInlineStyle';
+  style.textContent = `
+    #resultChip .result-chip-row {
+      display: flex !important;
+      align-items: stretch !important;
+      justify-content: flex-end !important;
+      gap: 10px !important;
+      width: 100% !important;
+    }
+
+    #resultChip .research-report-card {
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+      min-width: 128px !important;
+      padding: 10px 14px !important;
+      border-radius: 12px !important;
+      background: rgba(14, 165, 233, 0.22) !important;
+      border: 1px solid rgba(125, 211, 252, 0.35) !important;
+      color: #f8fafc !important;
+      text-decoration: none !important;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.18) !important;
+      box-sizing: border-box !important;
+      cursor: pointer !important;
+      transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease !important;
+    }
+
+    #resultChip .research-report-card:hover {
+      transform: translateY(-1px) !important;
+      background: rgba(14, 165, 233, 0.32) !important;
+      border-color: rgba(186, 230, 253, 0.65) !important;
+    }
+
+    #resultChip .research-report-label {
+      font-size: 13px !important;
+      line-height: 1.2 !important;
+      color: #bae6fd !important;
+      font-weight: 600 !important;
+      white-space: nowrap !important;
+    }
+
+    #resultChip .research-report-date {
+      margin-top: 5px !important;
+      font-size: 16px !important;
+      line-height: 1.2 !important;
+      color: #ffffff !important;
+      font-weight: 700 !important;
+      font-variant-numeric: tabular-nums !important;
+      white-space: nowrap !important;
+    }
+
+    @media (max-width: 720px) {
+      #resultChip .result-chip-row {
+        flex-wrap: wrap !important;
+      }
+
+      #resultChip .research-report-card {
+        min-width: 100% !important;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
+
 function renderResultChip(selfRow, month, metric, colorMode){
   const host = document.querySelector('#resultChip');
   if (!host) {
@@ -698,17 +844,47 @@ function renderResultChip(selfRow, month, metric, colorMode){
     return;
   }
 
+  ensureResultChipReportStyles();
+
   const v = getMetricValue(selfRow, month, metric);
   const bg = colorFor(v, colorMode);
 
   const showCode = selfRow['個股'] || selfRow['代號'] || selfRow['股票代碼'] || selfRow['股票代號'] || selfRow['公司代號'] || selfRow['證券代號'] || '';
   const showName = selfRow['名稱'] || selfRow['公司名稱'] || selfRow['證券名稱'] || '';
+  const codeKey = normCode(showCode);
+
+  const report = researchReportByCode.get(codeKey);
+
+  const reportHtml = report
+    ? `
+      <a
+        class="research-report-card"
+        href="https://fbstw.link/5yqge4"
+        target="_blank"
+        rel="noopener noreferrer"
+        title="${safe(showCode)} ${safe(showName)} 最新研究報告：${safe(report.date)}"
+      >
+        <span class="research-report-label">研究報告</span>
+        <span class="research-report-date">${safe(report.date)}</span>
+      </a>
+    `
+    : '';
 
   host.innerHTML = `
-    <div class="result-card" style="background:${bg}">
-      <div class="row1"><strong>${safe(showCode)}｜${safe(showName)}</strong><span>${month.slice(0,4)}/${month.slice(4,6)} / ${metric}</span></div>
-      <div class="row2"><span>${safe(selfRow['產業別'] || '')}</span><span>${displayPct(v)}</span></div>
-    </div>`;
+    <div class="result-chip-row">
+      ${reportHtml}
+      <div class="result-card" style="background:${bg}">
+        <div class="row1">
+          <strong>${safe(showCode)}｜${safe(showName)}</strong>
+          <span>${month.slice(0,4)}/${month.slice(4,6)} / ${metric}</span>
+        </div>
+        <div class="row2">
+          <span>${safe(selfRow['產業別'] || '')}</span>
+          <span>${displayPct(v)}</span>
+        </div>
+      </div>
+    </div>
+  `;
 }
 
 
