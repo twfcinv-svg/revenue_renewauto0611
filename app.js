@@ -122,7 +122,34 @@ function disableFubonStockNavigation(){
     }
   }, true);
 }
-``
+
+// ===== 強制熱力圖個股方塊使用一般箭頭游標 =====
+function ensureTreemapDefaultCursorStyles(){
+  if (document.getElementById('treemapDefaultCursorStyle')) return;
+
+  const style = document.createElement('style');
+  style.id = 'treemapDefaultCursorStyle';
+  style.textContent = `
+    #upTreemap .node,
+    #upTreemap .node *,
+    #upTreemap .node-rect,
+    #upTreemap .node-label,
+    #downTreemap .node,
+    #downTreemap .node *,
+    #downTreemap .node-rect,
+    #downTreemap .node-label {
+      cursor: default !important;
+    }
+
+    #resultChip .result-card,
+    #resultChip .result-card * {
+      cursor: default !important;
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
 
 
 function triggerUnifiedQuery(){
@@ -188,6 +215,9 @@ window.addEventListener('DOMContentLoaded', async () => {
     // 關閉個股方塊、個股資訊卡、富邦證券 K 線圖連結
     // 但保留最新研究報告跳轉富邦投顧
     disableFubonStockNavigation();
+
+    // 強制熱力圖與個股資訊卡游標維持一般箭頭
+    ensureTreemapDefaultCursorStyles();
 
     await loadWorkbook();
     initControls();
@@ -2133,11 +2163,14 @@ if (filteredChildren.length === 0) {
         triggerUnifiedQuery();
       });
   }
-  if (!ENABLE_NODE_CLICK) {
-    node
-      .style('cursor', 'default')
-      .on('click', null);
-  }
+if (!ENABLE_NODE_CLICK) {
+  node
+    .style('cursor', 'default', 'important')
+    .on('click', null);
+
+  node.selectAll('*')
+    .style('cursor', 'default', 'important');
+}
   
 
   requestAnimationFrame(() => {
