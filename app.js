@@ -719,12 +719,12 @@ function handleRun(){
     return;
   }
 
-  try {
-    const codeLabel = (rowSelf['個股'] || rowSelf['代號'] || rowSelf['股票代碼'] || rowSelf['股票代號'] || rowSelf['公司代號'] || rowSelf['證券代號'] || '').trim();
-    const nameLabel = (rowSelf['名稱'] || rowSelf['公司名稱'] || rowSelf['證券名稱'] || '').trim();
-    const extra = `${month.slice(0,4)}/${month.slice(4,6)} · ${metric}`;
-    if (window.setResultChipLink) window.setResultChipLink(codeLabel, nameLabel, extra);
-  } catch (_) {}
+/*  try {
+//    const codeLabel = (rowSelf['個股'] || rowSelf['代號'] || rowSelf['股票代碼'] || rowSelf['股票代號'] || rowSelf['公司代號'] || rowSelf['證券代號'] || '').trim();
+//    const nameLabel = (rowSelf['名稱'] || rowSelf['公司名稱'] || rowSelf['證券名稱'] || '').trim();
+//    const extra = `${month.slice(0,4)}/${month.slice(4,6)} · ${metric}`;
+//    if (window.setResultChipLink) window.setResultChipLink(codeLabel, nameLabel, extra);
+/*  } catch (_) {}
 
 let upstreamEdges = upstreamHJ.filter(e => e['下游代號'] === codeKey);
 let downstreamEdges = downstreamHJ.filter(e => e['上游代號'] === codeKey);
@@ -1191,29 +1191,21 @@ function ensureConceptStockTableStyles(){
       padding-right: 10px !important;
     }
 
-    #conceptStockListWrap .stock-link,
-    #conceptStockListWrap .stock-link:link,
-    #conceptStockListWrap .stock-link:visited,
-    #conceptStockListWrap .stock-link:hover,
-    #conceptStockListWrap .stock-link:active,
-    #conceptStockListWrap .stock-link:focus {
-      color: #f8fafc !important;
-      text-decoration: none !important;
-      background: transparent !important;
-      outline: none !important;
-      box-shadow: none !important;
-    }
-
-    #conceptStockListWrap .stock-link {
-      display: inline-block !important;
-      cursor: pointer !important;
-      line-height: 1.2 !important;
-      font-weight: 600 !important;
-      max-width: 100% !important;
-      overflow: hidden !important;
-      text-overflow: ellipsis !important;
-      white-space: nowrap !important;
-    }
+#conceptStockListWrap .stock-text {
+  display: inline-block !important;
+  color: #f8fafc !important;
+  cursor: default !important;
+  text-decoration: none !important;
+  line-height: 1.2 !important;
+  font-weight: 600 !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  background: transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
   `;
 
   document.head.appendChild(style);
@@ -1253,9 +1245,9 @@ function renderConceptStockList(conceptName, downstreamEdges, month, metric){
 if (metaEl) {
   const monthLabel = formatMonthLabelForConceptTable(month);
 
-  metaEl.textContent = records.length
-    ? `資料月份：${monthLabel}｜共 ${records.length} 檔｜點選代號或名稱可開啟富邦投信 K 線圖`
-    : '查無符合資料';
+metaEl.textContent = records.length
+  ? `資料月份：${monthLabel}｜共 ${records.length} 檔`
+  : '查無符合資料';
 }
 
   if (!records.length) {
@@ -1267,39 +1259,26 @@ if (metaEl) {
     return;
   }
 
-  const rowsHtml = records.map(r => {
-    const url = getStockPageUrl(r.code);
+const rowsHtml = records.map(r => {
+  return `
+    <tr>
+      <td class="code">
+        <span class="stock-text" data-code="${safe(r.code)}">
+          ${safe(r.code)}
+        </span>
+      </td>
+      <td class="name">
+        <span class="stock-text" data-code="${safe(r.code)}">
+          ${safe(r.name || '-')}
+        </span>
+      </td>
+      <td class="industry">${safe(r.industry || '-')}</td>
+      <td class="num">${displayPct(r.mom)}</td>
+      <td class="num">${displayPct(r.yoy)}</td>
+    </tr>
+  `;
+}).join('');
 
-    return `
-      <tr>
-        <td class="code">
-          <a
-            class="stock-link"
-            data-code="${safe(r.code)}"
-            href="${safe(url)}"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            ${safe(r.code)}
-          </a>
-        </td>
-        <td class="name">
-          <a
-            class="stock-link"
-            data-code="${safe(r.code)}"
-            href="${safe(url)}"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            ${safe(r.name || '-')}
-          </a>
-        </td>
-        <td class="industry">${safe(r.industry || '-')}</td>
-        <td class="num">${displayPct(r.mom)}</td>
-        <td class="num">${displayPct(r.yoy)}</td>
-      </tr>
-    `;
-  }).join('');
 
 host.innerHTML = `
   <div class="concept-stock-table-wrap">
@@ -2261,19 +2240,15 @@ function ensureNewHighTableStyles(){
       padding: 9px 14px !important;
     }
 
-    /* 股票可點擊文字 */
-    #newHighTableWrap .stock-link {
-      display: inline-block !important;
-      color: #f8fafc !important;
-      cursor: pointer !important;
-      text-decoration: none !important;
-      line-height: 1.2 !important;
-    }
-
-    #newHighTableWrap .stock-link:hover {
-      color: #93c5fd !important;
-      text-decoration: underline !important;
-    }
+/* 股票純文字，不提供點擊跳轉 */
+#newHighTableWrap .stock-text {
+  display: inline-block !important;
+  color: #f8fafc !important;
+  cursor: default !important;
+  text-decoration: none !important;
+  line-height: 1.2 !important;
+  font-weight: 600 !important;
+}
 
     /* 群組 +/- 按鈕 */
     #newHighTableWrap .group-toggle {
@@ -2407,40 +2382,27 @@ function renderNewHighSummary(){
     const groupStartVisibleCount = visibleStockCount;
     const groupInitiallyExpanded = groupStartVisibleCount < NEWHIGH_COLLAPSE_AFTER;
 
-  const stockRowsHtml = g.list.map(r => {
-    visibleStockCount += 1;
-    const isExtraRow = visibleStockCount > NEWHIGH_COLLAPSE_AFTER;
-    const stockUrl = getStockPageUrl(r.code);
+const stockRowsHtml = g.list.map(r => {
+  visibleStockCount += 1;
+  const isExtraRow = visibleStockCount > NEWHIGH_COLLAPSE_AFTER;
 
-    return `
-      <tr class="stock-row ${isExtraRow ? 'extra-row' : ''}" data-industry="${safe(g.industry)}">
-        <td class="code">
-          <a
-            class="stock-link"
-            data-code="${safe(r.code)}"
-            href="${safe(stockUrl)}"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            ${safe(r.code)}
-          </a>
-        </td>
-        <td class="name">
-          <a
-            class="stock-link"
-            data-code="${safe(r.code)}"
-            href="${safe(stockUrl)}"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            ${safe(r.name)}
-          </a>
-        </td>
-        <td class="num">${displayPct(r.mom)}</td>
-        <td class="num">${displayPct(r.yoy)}</td>
-      </tr>
-    `;
-  }).join('');
+  return `
+    <tr class="stock-row ${isExtraRow ? 'extra-row' : ''}" data-industry="${safe(g.industry)}">
+      <td class="code">
+        <span class="stock-text" data-code="${safe(r.code)}">
+          ${safe(r.code)}
+        </span>
+      </td>
+      <td class="name">
+        <span class="stock-text" data-code="${safe(r.code)}">
+          ${safe(r.name)}
+        </span>
+      </td>
+      <td class="num">${displayPct(r.mom)}</td>
+      <td class="num">${displayPct(r.yoy)}</td>
+    </tr>
+  `;
+}).join('');
 
     const groupHeaderHtml = `
       <tr class="group-row" data-industry="${safe(g.industry)}">
