@@ -719,12 +719,12 @@ function handleRun(){
     return;
   }
 
-/*  try {
+//  try {
 //    const codeLabel = (rowSelf['個股'] || rowSelf['代號'] || rowSelf['股票代碼'] || rowSelf['股票代號'] || rowSelf['公司代號'] || rowSelf['證券代號'] || '').trim();
 //    const nameLabel = (rowSelf['名稱'] || rowSelf['公司名稱'] || rowSelf['證券名稱'] || '').trim();
 //    const extra = `${month.slice(0,4)}/${month.slice(4,6)} · ${metric}`;
 //    if (window.setResultChipLink) window.setResultChipLink(codeLabel, nameLabel, extra);
-/*  } catch (_) {}
+//  } catch (_) {}
 
 let upstreamEdges = upstreamHJ.filter(e => e['下游代號'] === codeKey);
 let downstreamEdges = downstreamHJ.filter(e => e['上游代號'] === codeKey);
