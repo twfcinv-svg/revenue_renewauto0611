@@ -123,13 +123,35 @@ function disableFubonStockNavigation(){
   }, true);
 }
 
-// ===== 強制熱力圖個股方塊使用一般箭頭游標 =====
+// ===== 強制熱力圖所有區塊使用一般箭頭游標 =====
+// 包含：個股方塊、類股群組底色、類股外框、類股標題
 function ensureTreemapDefaultCursorStyles(){
   if (document.getElementById('treemapDefaultCursorStyle')) return;
 
   const style = document.createElement('style');
   style.id = 'treemapDefaultCursorStyle';
   style.textContent = `
+    /* 左右熱力圖整張 SVG */
+    #upTreemap,
+    #downTreemap {
+      cursor: default !important;
+    }
+
+    /* 類股群組層，例如 IC代工、車用電子、Google TPU */
+    #upTreemap .parent,
+    #upTreemap .parent *,
+    #upTreemap .group-bg,
+    #upTreemap .group-border,
+    #upTreemap .node-title,
+    #downTreemap .parent,
+    #downTreemap .parent *,
+    #downTreemap .group-bg,
+    #downTreemap .group-border,
+    #downTreemap .node-title {
+      cursor: default !important;
+    }
+
+    /* 個股方塊層 */
     #upTreemap .node,
     #upTreemap .node *,
     #upTreemap .node-rect,
@@ -141,6 +163,7 @@ function ensureTreemapDefaultCursorStyles(){
       cursor: default !important;
     }
 
+    /* 查詢結果右側個股資訊卡 */
     #resultChip .result-card,
     #resultChip .result-card * {
       cursor: default !important;
@@ -2170,6 +2193,20 @@ if (!ENABLE_NODE_CLICK) {
 
   node.selectAll('*')
     .style('cursor', 'default', 'important');
+
+  parents
+    .style('cursor', 'default', 'important')
+    .on('click', null);
+
+  parents.selectAll('*')
+    .style('cursor', 'default', 'important');
+
+  svg
+    .style('cursor', 'default', 'important');
+
+  svg.selectAll('.group-bg, .group-border, .node-title')
+    .style('cursor', 'default', 'important')
+    .on('click', null);
 }
   
 
